@@ -4,6 +4,7 @@ import json
 import sys
 import argparse
 
+# Find minimal price from dict of rooms
 def find_min_price(rooms):
     if len(rooms) == 0:
         return None, None
@@ -17,6 +18,7 @@ def find_min_price(rooms):
 
     return min_name, min_price
 
+# Process json data and write results to `out`
 def process(data, out):
     for hotel in data['assignment_results']:
         print(f'For hotel "{hotel["hotel_name"]}":', file=out)
@@ -28,28 +30,28 @@ def process(data, out):
         min_name, min_price = find_min_price(hotel['shown_price'])
 
         # Task a
-        print(f'\tCheapest price: {min_price}', file=out)
+        print(f'\tCheapest price: {min_price:.2f}', file=out)
         print(file=out)
 
         # Task b
         print('\tCheapest room:', file=out)
         print(f'\t\tType: {min_name}', file=out)
-        print(f'\t\tPrice: {min_price}', file=out)
+        print(f'\t\tPrice: {min_price:.2f}', file=out)
         print(f'\t\tNumber of guests: {hotel["number_of_guests"]}', file=out)
         print(file=out)
 
         # Task c
         taxes_total = sum(float(price) for _, price in json.loads(hotel['ext_data']['taxes']).items())
 
-        print("\tPrices for all rooms:", file=out)
+        print("\tTotal price for all rooms (net + taxes):", file=out)
         for room_name, room_price in hotel['net_price'].items():
             room_price = float(room_price) + taxes_total
-            print(f'\t\t"{room_name}" : {room_price}', file=out)
+            print(f'\t\t"{room_name}" : {room_price:.2f}', file=out)
         
         print(file=out)
             
 
-
+# Entry point
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=sys.argv[0], description="Fornova task")
     parser.add_argument('-i', '--input', type=str, default=None, help="Input file (stdin by default)")
